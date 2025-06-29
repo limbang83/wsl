@@ -20,7 +20,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, RadialBarChart, RadialBar } from "recharts";
 
 const sidebarMenus = [
   {
@@ -160,6 +160,23 @@ const labelChartData = [
   { month: "May", adopted: 7, completed: 11 },
   { month: "Jun", adopted: 9, completed: 13 }
 ];
+
+// 수행 숙련도 도넛 차트 데이터
+const skillLevelData = [
+  { name: "조공", value: 35, fill: "hsl(var(--chart-1))" },
+  { name: "준기공", value: 45, fill: "hsl(var(--chart-2))" },
+  { name: "기공", value: 20, fill: "hsl(var(--chart-3))" }
+];
+
+// 평균 임금 방사형 차트 데이터
+const avgWageData = [
+  { category: "채택건수", value: 120, fill: "hsl(var(--chart-1))" },
+  { category: "채택비용", value: 85, fill: "hsl(var(--chart-2))" },
+  { category: "평균임금", value: 70, fill: "hsl(var(--chart-3))" }
+];
+
+// 차트 색상 배열
+const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))'];
 
 
 function getMonthMatrix(year, month) {
@@ -655,58 +672,87 @@ export default function Dashboard() {
                 </AlertDialog>
               </div>
             </div>
+            {/* 수행 숙련도 도넛 차트 */}
             <div className="bg-white rounded-xl shadow p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="font-semibold text-lg">Performance</span>
-                <select className="text-xs border rounded px-2 py-1">
-                  <option>Weekly</option>
-                  <option>Monthly</option>
-                </select>
+                <span className="font-semibold text-lg">수행 숙련도</span>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Orders</span>
-                    <span>75%</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-blue-500 rounded-full" style={{ width: '75%' }}></div>
-                  </div>
+              <div className="h-64 relative">
+                <ChartContainer config={chartConfig} className="h-full w-full">
+                  <PieChart>
+                    <Pie
+                      data={skillLevelData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {skillLevelData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold">
+                      100%
+                    </text>
+                  </PieChart>
+                </ChartContainer>
+                <div className="flex justify-center gap-4 mt-4">
+                  {skillLevelData.map((entry, index) => (
+                    <div key={entry.name} className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: COLORS[index] }}
+                      ></div>
+                      <span className="text-sm text-gray-600">{entry.name} ({entry.value}%)</span>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Ratings</span>
-                    <span>68%</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-red-400 rounded-full" style={{ width: '68%' }}></div>
-                  </div>
+              </div>
+            </div>
+            {/* 평균 임금 방사형 차트 */}
+            <div className="bg-white rounded-xl shadow p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-lg">평균 임금</span>
+              </div>
+              <div className="h-64 relative">
+                <ChartContainer config={chartConfig} className="h-full w-full">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="30%"
+                    outerRadius="90%"
+                    data={avgWageData}
+                  >
+                    <RadialBar 
+                      dataKey="value" 
+                      stackId="1" 
+                      cornerRadius={4}
+                      fill="hsl(var(--chart-1))"
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </RadialBarChart>
+                </ChartContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <div className="text-2xl font-bold">상 456만원</div>
+                  <div className="text-sm text-gray-500">평균 임금</div>
                 </div>
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Tasks</span>
-                    <span>80%</span>
+                <div className="flex flex-col gap-2 mt-4">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-chart-1"></div>
+                      <span>총 채택건수</span>
+                    </div>
+                    <span className="font-semibold">120건</span>
                   </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-orange-400 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Payments</span>
-                    <span>61%</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-green-400 rounded-full" style={{ width: '61%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>Cancels</span>
-                    <span>37%</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-pink-400 rounded-full" style={{ width: '37%' }}></div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-chart-2"></div>
+                      <span>총 채택비용</span>
+                    </div>
+                    <span className="font-semibold">상 5,472만원</span>
                   </div>
                 </div>
               </div>
