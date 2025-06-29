@@ -367,10 +367,21 @@ function CalendarCard() {
 
 export default function Dashboard() {
   const [activeCard, setActiveCard] = useState(0);
+  const [skillChartKey, setSkillChartKey] = useState(0);
+  const [wageChartKey, setWageChartKey] = useState(0);
   
   // 차트 타입 결정 (0,2는 Stacked, 1,3은 Label)
   const isStackedChart = activeCard === 0 || activeCard === 2;
   const chartData = isStackedChart ? stackedChartData : labelChartData;
+
+  // 차트 애니메이션 재실행 함수
+  const handleSkillChartHover = () => {
+    setSkillChartKey(prev => prev + 1);
+  };
+
+  const handleWageChartHover = () => {
+    setWageChartKey(prev => prev + 1);
+  };
 
   return (
     <div className="min-h-screen bg-[#f6f8fc] flex flex-col">
@@ -575,7 +586,8 @@ export default function Dashboard() {
             </div>
           </section>
           {/* 우측 패널 */}
-          <aside className="w-[340px] flex flex-col gap-8">
+          <aside className="w-[380px] flex flex-col gap-6">
+            {/* 프로필 카드 */}
             <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center gap-3">
               <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center overflow-hidden">
                 <Image src="/vercel.svg" alt="Profile" width={80} height={80} />
@@ -672,103 +684,116 @@ export default function Dashboard() {
                 </AlertDialog>
               </div>
             </div>
+            
             {/* 수행 숙련도 도넛 차트 */}
             <motion.div 
-              className="bg-white rounded-xl shadow p-4 transition-transform duration-300 hover:scale-105"
+              className="bg-white rounded-xl shadow p-6 transition-transform duration-300 hover:scale-105"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               whileHover={{ scale: 1.02 }}
+              onMouseEnter={handleSkillChartHover}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-base">수행 숙련도</span>
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-lg">수행 숙련도</span>
               </div>
-              <div className="h-44 relative">
-                <ChartContainer config={chartConfig} className="h-full w-full">
-                  <PieChart>
-                    <Pie
-                      data={skillLevelData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={70}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {skillLevelData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-lg font-bold">
-                      100%
-                    </text>
-                  </PieChart>
-                </ChartContainer>
-              </div>
-              <div className="flex flex-col gap-1 mt-2">
-                {skillLevelData.map((entry, index) => (
-                  <div key={entry.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className="w-2 h-2 rounded-full" 
-                        style={{ backgroundColor: COLORS[index] }}
-                      ></div>
-                      <span className="text-xs text-gray-600">{entry.name}</span>
+              <div className="flex items-center gap-4">
+                <div className="h-36 w-36 relative flex-shrink-0">
+                  <ChartContainer config={chartConfig} className="h-full w-full">
+                    <PieChart key={skillChartKey}>
+                      <Pie
+                        data={skillLevelData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={72}
+                        paddingAngle={2}
+                        dataKey="value"
+                        animationBegin={0}
+                        animationDuration={800}
+                      >
+                        {skillLevelData.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                        ))}
+                      </Pie>
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-xl font-bold">
+                        100%
+                      </text>
+                    </PieChart>
+                  </ChartContainer>
+                </div>
+                <div className="flex flex-col gap-3 flex-1">
+                  {skillLevelData.map((entry, index) => (
+                    <div key={entry.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: COLORS[index] }}
+                        ></div>
+                        <span className="text-sm text-gray-600">{entry.name}</span>
+                      </div>
+                      <span className="text-sm font-semibold">{entry.value}%</span>
                     </div>
-                    <span className="text-xs font-semibold">{entry.value}%</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </motion.div>
+
             {/* 평균 임금 방사형 차트 */}
             <motion.div 
-              className="bg-white rounded-xl shadow p-4 transition-transform duration-300 hover:scale-105"
+              className="bg-white rounded-xl shadow p-6 transition-transform duration-300 hover:scale-105"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               whileHover={{ scale: 1.02 }}
+              onMouseEnter={handleWageChartHover}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-base">평균 임금</span>
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-lg">평균 임금</span>
               </div>
-              <div className="h-32 relative">
-                <ChartContainer config={chartConfig} className="h-full w-full">
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="35%"
-                    outerRadius="80%"
-                    data={avgWageData}
-                  >
-                    <RadialBar 
-                      dataKey="value" 
-                      stackId="1" 
-                      cornerRadius={3}
-                      fill="hsl(var(--chart-1))"
-                    />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </RadialBarChart>
-                </ChartContainer>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-lg font-bold">456만원</div>
-                  <div className="text-xs text-gray-500">평균 임금</div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-1 mt-2">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-1))' }}></div>
-                    <span>총 채택건수</span>
+              <div className="flex items-center gap-4">
+                <div className="h-36 w-36 relative flex-shrink-0">
+                  <ChartContainer config={chartConfig} className="h-full w-full">
+                    <RadialBarChart
+                      key={wageChartKey}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="40%"
+                      outerRadius="90%"
+                      data={avgWageData}
+                    >
+                      <RadialBar 
+                        dataKey="value" 
+                        stackId="1" 
+                        cornerRadius={4}
+                        fill="hsl(var(--chart-1))"
+                        animationBegin={0}
+                        animationDuration={800}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                    </RadialBarChart>
+                  </ChartContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-lg font-bold">456만원</div>
+                    <div className="text-xs text-gray-500">평균 임금</div>
                   </div>
-                  <span className="font-semibold">120건</span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-2))' }}></div>
-                    <span>총 채택비용</span>
+                <div className="flex flex-col gap-3 flex-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-1))' }}></div>
+                      <span>총 채택건수</span>
+                    </div>
+                    <span className="font-semibold">120건</span>
                   </div>
-                  <span className="font-semibold">5,472만원</span>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-2))' }}></div>
+                      <span>총 채택비용</span>
+                    </div>
+                    <span className="font-semibold">5,472만원</span>
+                  </div>
                 </div>
               </div>
             </motion.div>
