@@ -20,7 +20,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell, RadialBarChart, RadialBar } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 
 const sidebarMenus = [
   {
@@ -168,11 +168,16 @@ const skillLevelData = [
   { name: "기공", value: 20, fill: "hsl(var(--chart-3))" }
 ];
 
-// 평균 임금 방사형 차트 데이터
-const avgWageData = [
-  { category: "채택건수", value: 120, fill: "hsl(var(--chart-1))" },
-  { category: "채택비용", value: 85, fill: "hsl(var(--chart-2))" },
-  { category: "평균임금", value: 70, fill: "hsl(var(--chart-3))" }
+// 평균 임금 게이지 차트 데이터
+const avgWageGaugeData = [
+  { name: "평균임금", value: 456, maxValue: 600, unit: "만원" }
+];
+
+// 게이지 차트 색상 구간 설정
+const gaugeColorRanges = [
+  { min: 0, max: 200, color: "#ef4444" },    // 빨강 (낮음)
+  { min: 200, max: 400, color: "#f59e0b" },  // 주황 (보통)
+  { min: 400, max: 600, color: "#10b981" }   // 초록 (높음)
 ];
 
 // 차트 색상 배열
@@ -385,33 +390,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#f6f8fc] flex flex-col">
-      {/* 상단바 */}
-      <header className="flex items-center justify-between px-8 py-4 bg-white shadow-sm">
-        <div className="flex items-center gap-4">
-          <Image src="/file.svg" alt="Logo" width={40} height={40} className="rounded" />
-          <span className="text-2xl font-bold text-[#222]">saastech.io</span>
-        </div>
-        <div className="flex-1 max-w-xl mx-8">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search something..."
-              className="w-full rounded-full border border-gray-200 pl-10 pr-24 py-2 bg-[#f6f8fc] focus:outline-none focus:ring-2 focus:ring-blue-200"
-            />
-            <span className="absolute left-3 top-2.5 text-gray-400">
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </span>
-            <button className="absolute right-2 top-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-4 py-1 text-sm font-semibold">Search</button>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="p-2 rounded-full hover:bg-gray-100">
-            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="1"/></svg>
-          </button>
-          <span className="font-medium text-gray-700">Admin</span>
-          <span className="w-9 h-9 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-bold">A</span>
-        </div>
-      </header>
       <div className="flex flex-1 bg-[#232946]">
         {/* 사이드바 */}
         <aside className="w-64 bg-[#232946] text-white flex flex-col py-8 px-6 gap-8 min-h-full">
@@ -589,12 +567,39 @@ export default function Dashboard() {
           <aside className="w-[380px] flex flex-col gap-6">
             {/* 프로필 카드 */}
             <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center gap-3">
-              <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center overflow-hidden">
-                <Image src="/vercel.svg" alt="Profile" width={80} height={80} />
+              {/* 상단 프로필 영역 - 좌우 분할 */}
+              <div className="flex items-start justify-between w-full">
+                {/* 좌측: 프로필 사진, 닉네임, 이름 */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center overflow-hidden">
+                    <Image src="/vercel.svg" alt="Profile" width={80} height={80} />
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="font-bold text-lg">너구순진</span>
+                    <span className="text-xs text-gray-400">임병현</span>
+                  </div>
+                </div>
+                
+                {/* 우측: 경력, 숙련도 */}
+                <div className="flex flex-col items-end gap-3 mt-2">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-400">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    <span className="text-sm text-gray-600">경력</span>
+                    <span className="text-sm font-semibold">4년 6개월</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-400">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span className="text-sm text-gray-600">숙련도</span>
+                    <span className="text-sm font-semibold">기공</span>
+                  </div>
+                </div>
               </div>
-              <span className="font-bold text-lg">Gloria</span>
-              <span className="text-xs text-gray-400">@Gloria</span>
-              <div className="flex gap-8 mt-4 justify-center">
+              <div className="flex gap-8 justify-center">
                 {/* 알림 */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -740,7 +745,7 @@ export default function Dashboard() {
               </div>
             </motion.div>
 
-            {/* 평균 임금 방사형 차트 */}
+            {/* 평균 임금 게이지 차트 */}
             <motion.div 
               className="bg-white rounded-xl shadow p-6 transition-transform duration-300 hover:scale-105"
               initial={{ opacity: 0, y: 20 }}
@@ -753,47 +758,82 @@ export default function Dashboard() {
                 <span className="font-semibold text-lg">평균 임금</span>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-36 w-36 relative flex-shrink-0">
-                  <ChartContainer config={chartConfig} className="h-full w-full">
-                    <RadialBarChart
+                {/* 왼쪽 통계 정보 */}
+                <div className="flex flex-col items-center gap-1 min-w-[60px]">
+                  <div className="text-xs text-gray-500 text-center whitespace-nowrap">총 채택건수</div>
+                  <div className="text-sm font-semibold">120건</div>
+                </div>
+                
+                {/* 중앙 게이지 차트 */}
+                <div className="h-36 w-48 relative flex-shrink-0">
+                  {/* 게이지 차트 SVG */}
+                  <svg viewBox="0 0 200 120" className="w-full h-full">
+                    {/* 배경 아크 */}
+                    <path
+                      d="M 20 100 A 80 80 0 0 1 180 100"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                    />
+                    
+                    {/* 색상 구간별 아크 */}
+                    {gaugeColorRanges.map((range, index) => {
+                      const startAngle = -180 + (range.min / avgWageGaugeData[0].maxValue) * 180;
+                      const endAngle = -180 + (range.max / avgWageGaugeData[0].maxValue) * 180;
+                      const startX = 100 + 80 * Math.cos((startAngle * Math.PI) / 180);
+                      const startY = 100 + 80 * Math.sin((startAngle * Math.PI) / 180);
+                      const endX = 100 + 80 * Math.cos((endAngle * Math.PI) / 180);
+                      const endY = 100 + 80 * Math.sin((endAngle * Math.PI) / 180);
+                      
+                      return (
+                        <path
+                          key={index}
+                          d={`M ${startX} ${startY} A 80 80 0 0 1 ${endX} ${endY}`}
+                          fill="none"
+                          stroke={range.color}
+                          strokeWidth="12"
+                          strokeLinecap="round"
+                          opacity="0.3"
+                        />
+                      );
+                    })}
+                    
+                    {/* 현재 값 표시 아크 */}
+                    <motion.path
+                      d={`M 20 100 A 80 80 0 0 1 ${100 + 80 * Math.cos((-180 + (avgWageGaugeData[0].value / avgWageGaugeData[0].maxValue) * 180) * Math.PI / 180)} ${100 + 80 * Math.sin((-180 + (avgWageGaugeData[0].value / avgWageGaugeData[0].maxValue) * 180) * Math.PI / 180)}`}
+                      fill="none"
+                      stroke={gaugeColorRanges.find(range => 
+                        avgWageGaugeData[0].value >= range.min && avgWageGaugeData[0].value <= range.max
+                      )?.color || "#10b981"}
+                      strokeWidth="12"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 1.5, ease: "easeInOut" }}
                       key={wageChartKey}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius="40%"
-                      outerRadius="90%"
-                      data={avgWageData}
-                    >
-                      <RadialBar 
-                        dataKey="value" 
-                        stackId="1" 
-                        cornerRadius={4}
-                        fill="hsl(var(--chart-1))"
-                        animationBegin={0}
-                        animationDuration={800}
-                      />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                    </RadialBarChart>
-                  </ChartContainer>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-lg font-bold">456만원</div>
-                    <div className="text-xs text-gray-500">평균 임금</div>
+                    />
+                    
+                    {/* 중앙 텍스트 */}
+                    <text x="100" y="85" textAnchor="middle" className="text-xl font-bold fill-gray-800">
+                      {avgWageGaugeData[0].value}{avgWageGaugeData[0].unit}
+                    </text>
+                    <text x="100" y="105" textAnchor="middle" className="text-xs fill-gray-500">
+                      평균 임금
+                    </text>
+                  </svg>
+                  
+                  {/* 게이지 범위 표시 */}
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-400">
+                    <span>0</span>
+                    <span>{avgWageGaugeData[0].maxValue}{avgWageGaugeData[0].unit}</span>
                   </div>
                 </div>
-                <div className="flex flex-col gap-3 flex-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-1))' }}></div>
-                      <span>총 채택건수</span>
-                    </div>
-                    <span className="font-semibold">120건</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: 'hsl(var(--chart-2))' }}></div>
-                      <span>총 채택비용</span>
-                    </div>
-                    <span className="font-semibold">5,472만원</span>
-                  </div>
+                
+                {/* 오른쪽 통계 정보 */}
+                <div className="flex flex-col items-center gap-1 min-w-[60px]">
+                  <div className="text-xs text-gray-500 text-center whitespace-nowrap">총 채택비용</div>
+                  <div className="text-sm font-semibold whitespace-nowrap">5,472만원</div>
                 </div>
               </div>
             </motion.div>
