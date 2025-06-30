@@ -23,11 +23,11 @@
   --border: 229 231 235;
   --input: 229 231 235;
   --ring: 0 0 0;
-  --chart-1: 59 130 246;
-  --chart-2: 16 185 129;
-  --chart-3: 239 68 68;
-  --chart-4: 245 158 11;
-  --chart-5: 139 69 19;
+  --chart-1: 55 65 81;
+  --chart-2: 107 114 128;
+  --chart-3: 156 163 175;
+  --chart-4: 209 213 219;
+  --chart-5: 243 244 246;
 }
 
 .dark {
@@ -90,9 +90,9 @@
   color: #374151 !important;
 }
 
-/* 차트 호버 배경 색상 */
+/* 차트 호버 배경 색상 - 투명한 회색으로 변경 */
 .recharts-rectangle.recharts-tooltip-cursor {
-  fill: #ec4899 !important;
+  fill: rgba(107, 114, 128, 0.1) !important;
 }
 
 /* 그리드 라인 색상을 밝은 회색으로 변경 */
@@ -103,4 +103,102 @@
 
 .recharts-cartesian-grid line {
   stroke: #e5e7eb !important;
+}
+
+/* 모든 분홍색 관련 요소를 회색으로 강제 변경 */
+.recharts-bar-rectangle:hover,
+.recharts-active-bar,
+.recharts-bar:hover,
+[fill="#ec4899"],
+[fill="#f43f5e"],
+[fill="#fb7185"],
+[stroke="#ec4899"],
+[stroke="#f43f5e"],
+[stroke="#fb7185"] {
+  fill: rgba(107, 114, 128, 0.3) !important;
+  stroke: rgba(107, 114, 128, 0.3) !important;
+}
+
+/* shadcn/ui 차트 컴포넌트 기본 색상 오버라이드 */
+[data-chart="1"] {
+  --color: 55 65 81 !important;
+}
+
+[data-chart="2"] {
+  --color: 107 114 128 !important;
+}
+
+[data-chart="3"] {
+  --color: 156 163 175 !important;
+}
+
+/* Recharts 라이브러리의 모든 하이라이트 색상 오버라이드 */
+.recharts-surface,
+.recharts-wrapper,
+.recharts-layer {
+  --color-primary: rgba(107, 114, 128, 1) !important;
+  --color-primary-hover: rgba(107, 114, 128, 0.3) !important;
+}
+
+/* 모든 hover 상태의 분홍색 제거 */
+*[class*="recharts"] *:hover {
+  fill: rgba(107, 114, 128, 0.3) !important;
+  stroke: rgba(107, 114, 128, 0.3) !important;
+}
+
+/* 추가 보강 - 모든 가능한 분홍색 요소 제거 */
+.recharts-bar rect:hover,
+.recharts-bar-rectangle:hover,
+.recharts-active-bar rect,
+.recharts-active-bar,
+.recharts-bar-sector:hover,
+.recharts-pie-sector:hover,
+.recharts-scatter-dot:hover {
+  fill: rgba(107, 114, 128, 0.3) !important;
+  stroke: rgba(107, 114, 128, 0.5) !important;
+}
+
+/* 툴팁 커서 색상 추가 보강 */
+.recharts-tooltip-cursor,
+.recharts-reference-area-rect,
+.recharts-brush-slide {
+  fill: rgba(107, 114, 128, 0.1) !important;
+  stroke: rgba(107, 114, 128, 0.3) !important;
+}
+
+/* 범례 하이라이트 색상 */
+.recharts-legend-item:hover {
+  color: rgba(107, 114, 128, 1) !important;
+}
+
+/* 차트 내 모든 색상 변수 오버라이드 */
+.recharts-wrapper * {
+  --chart-color-1: rgba(55, 65, 81, 1) !important;
+  --chart-color-2: rgba(107, 114, 128, 1) !important;
+  --chart-color-3: rgba(156, 163, 175, 1) !important;
+  --chart-color-4: rgba(209, 213, 219, 1) !important;
+  --chart-color-5: rgba(243, 244, 246, 1) !important;
+}
+
+/* 모든 분홍색 클래스와 속성을 강제로 회색으로 변경 */
+.\[\&_\.recharts-rectangle\.recharts-tooltip-cursor\]\:\!fill-pink-500 .recharts-rectangle.recharts-tooltip-cursor,
+*[class*="fill-pink"],
+*[class*="bg-pink"],
+*[class*="text-pink"],
+*[class*="border-pink"] {
+  fill: #d1d5db !important;
+  background-color: #d1d5db !important;
+  color: #374151 !important;
+  border-color: #d1d5db !important;
+}
+
+/* CSS에서 직접 분홍색이 적용된 요소들 강제 오버라이드 */
+*[style*="#ec4899"],
+*[style*="#f43f5e"],
+*[style*="#fb7185"],
+*[style*="rgb(236, 73, 153)"],
+*[style*="rgb(244, 63, 94)"] {
+  fill: #d1d5db !important;
+  background-color: #d1d5db !important;
+  color: #374151 !important;
 }

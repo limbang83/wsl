@@ -89,6 +89,10 @@ const eventsByDate = {
     { title: "Picnic", time: "8:30 am", description: "Company picnic at the park." },
     { title: "Assignment", time: "9:30 pm", description: "Submit project assignment." },
   ],
+  "2025-06-30": [
+    { title: "프로젝트 리뷰", time: "2:00 pm", description: "분기별 프로젝트 진행 상황 리뷰 회의" },
+    { title: "클라이언트 미팅", time: "4:30 pm", description: "신규 프로젝트 관련 클라이언트 미팅" },
+  ],
 };
 
 // 한국 공휴일(월-일 문자열 배열)
@@ -121,23 +125,23 @@ const unreadNoti = notifications.filter(n => !n.read).length;
 const unreadMsg = messages.filter(m => !m.read).length;
 const userPoint = 50000;
 
-// 차트 설정
+// 차트 설정 - 무채색 그레이 톤
 const chartConfig = {
   desktop: {
     label: "Desktop",
-    color: "hsl(var(--chart-1))"
+    color: "#374151"
   },
   mobile: {
     label: "Mobile", 
-    color: "hsl(var(--chart-2))"
+    color: "#6b7280"
   },
   progress: {
     label: "진행중",
-    color: "hsl(var(--chart-3))"
+    color: "#9ca3af"
   },
   completed: {
     label: "완료",
-    color: "hsl(var(--chart-4))"
+    color: "#d1d5db"
   }
 };
 
@@ -161,11 +165,11 @@ const labelChartData = [
   { month: "Jun", adopted: 9, completed: 13 }
 ];
 
-// 수행 숙련도 도넛 차트 데이터
+// 수행 숙련도 도넛 차트 데이터 - 무채색 그레이 톤
 const skillLevelData = [
-  { name: "조공", value: 35, fill: "hsl(var(--chart-1))" },
-  { name: "준기공", value: 45, fill: "hsl(var(--chart-2))" },
-  { name: "기공", value: 20, fill: "hsl(var(--chart-3))" }
+  { name: "조공", value: 35, fill: "#374151" },
+  { name: "준기공", value: 45, fill: "#6b7280" },
+  { name: "기공", value: 20, fill: "#9ca3af" }
 ];
 
 // 평균 임금 게이지 차트 데이터
@@ -173,15 +177,15 @@ const avgWageGaugeData = [
   { name: "평균임금", value: 456, maxValue: 600, unit: "만원" }
 ];
 
-// 게이지 차트 색상 구간 설정
+// 게이지 차트 색상 구간 설정 - 무채색 그레이 톤
 const gaugeColorRanges = [
-  { min: 0, max: 200, color: "#ef4444" },    // 빨강 (낮음)
-  { min: 200, max: 400, color: "#f59e0b" },  // 주황 (보통)
-  { min: 400, max: 600, color: "#10b981" }   // 초록 (높음)
+  { min: 0, max: 200, color: "#6b7280" },    // 진한 회색 (낮음)
+  { min: 200, max: 400, color: "#9ca3af" },  // 중간 회색 (보통)
+  { min: 400, max: 600, color: "#374151" }   // 진한 회색 (높음)
 ];
 
-// 차트 색상 배열
-const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))'];
+// 차트 색상 배열 - 무채색 그레이 톤
+const COLORS = ['#374151', '#6b7280', '#9ca3af'];
 
 
 function getMonthMatrix(year, month) {
@@ -257,7 +261,7 @@ function CalendarCard() {
         </button>
         <div className="flex flex-col items-center">
           <span className="text-2xl font-bold">{year}</span>
-          <span className="text-base font-semibold text-pink-500 tracking-widest">{monthLabel}</span>
+          <span className="text-base font-semibold text-gray-600 tracking-widest">{monthLabel}</span>
         </div>
         <button
           className="p-2 rounded-full hover:bg-gray-100"
@@ -280,7 +284,7 @@ function CalendarCard() {
         <table className="w-full text-center text-sm select-none">
           <thead>
             <tr className="text-gray-400">
-              <th className="font-normal text-red-500">S</th>
+              <th className="font-normal text-gray-500">S</th>
               <th className="font-normal">M</th>
               <th className="font-normal">T</th>
               <th className="font-normal">W</th>
@@ -300,8 +304,8 @@ function CalendarCard() {
                       key={j}
                       className={`h-10 w-10 p-0 relative cursor-pointer rounded-full transition
                         ${d.isCurrentMonth ? "" : "text-gray-300"}
-                        ${d.isToday ? "bg-pink-100 text-pink-600 font-bold" : ""}
-                        ${selected && d.date.toDateString() === selected.toDateString() ? "bg-pink-500 text-white font-bold" : ""}
+                        ${d.isToday ? "bg-gray-200 text-gray-800 font-bold" : ""}
+                        ${selected && d.date.toDateString() === selected.toDateString() ? "bg-gray-700 text-white font-bold" : ""}
                       `}
                       onClick={() => d.isCurrentMonth && setSelected(d.date)}
                     >
@@ -313,7 +317,7 @@ function CalendarCard() {
                           {d.date.getDate()}
                         </span>
                         {d.hasEvent && d.isCurrentMonth && (
-                          <span className="w-1.5 h-1.5 mt-0.5 rounded-full bg-pink-500 inline-block"></span>
+                          <span className="w-1.5 h-1.5 mt-0.5 rounded-full bg-blue-500 inline-block"></span>
                         )}
                       </div>
                     </td>
@@ -325,7 +329,7 @@ function CalendarCard() {
         </table>
       </div>
       {/* UPCOMING 일정 - 캘린더와의 간격은 mt-2로 조절, 숫자만 바꿔서 원하는 간격으로 쉽게 변경 가능 */}
-      <div className="w-full rounded-b-2xl rounded-t-none bg-pink-500 text-white px-4 pt-0 pb-4 flex flex-col gap-1 mt-10">
+      <div className="w-full rounded-b-2xl rounded-t-none bg-gray-700 text-white px-4 pt-0 pb-4 flex flex-col gap-1 mt-10">
         <span className="font-bold tracking-widest text-sm mb-2">UPCOMING</span>
         <div className="flex flex-col gap-1 max-h-72 overflow-y-auto">
           {events.length === 0 ? (
@@ -335,11 +339,11 @@ function CalendarCard() {
               <AlertDialog key={idx} open={dialogOpen && dialogEvent === idx} onOpenChange={(open) => { setDialogOpen(open); if (!open) setDialogEvent(null); }}>
                 <AlertDialogTrigger asChild>
                   <button
-                    className="flex items-start gap-3 w-full text-left hover:bg-pink-400/40 rounded-lg px-2 py-1 transition"
+                    className="flex items-start gap-3 w-full text-left hover:bg-gray-600/40 rounded-lg px-2 py-1 transition"
                     onClick={() => { setDialogOpen(true); setDialogEvent(idx); }}
                   >
                     <div className="flex flex-col items-center">
-                      <span className="bg-white text-pink-500 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
+                      <span className="bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold">{ev.title}</div>
@@ -389,14 +393,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f8fc] flex flex-col">
-      <div className="flex flex-1 bg-[#232946]">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="flex flex-1 bg-gray-800">
         {/* 사이드바 */}
-        <aside className="w-64 bg-[#232946] text-white flex flex-col py-8 px-6 gap-8 min-h-full">
+        <aside className="w-64 bg-gray-800 text-white flex flex-col py-8 px-6 gap-8 min-h-full">
           <nav className="flex-1">
             <ul className="space-y-2">
               {sidebarMenus.map((menu, idx) => (
-                <li key={menu.label} className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium hover:bg-[#353a5a] cursor-pointer ${idx === 0 ? 'bg-[#353a5a] font-semibold' : ''}`}> 
+                <li key={menu.label} className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium hover:bg-gray-700 cursor-pointer ${idx === 0 ? 'bg-gray-700 font-semibold' : ''}`}> 
                   <span>{menu.icon}</span>
                   {menu.label}
                 </li>
@@ -406,17 +410,17 @@ export default function Dashboard() {
           <div className="mt-auto flex flex-col gap-2">
             {/* Settings, Logout 메뉴 */}
             <div className="flex flex-col gap-1 mb-2">
-              <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-200 hover:bg-[#353a5a]">
+              <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-200 hover:bg-gray-700">
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 008.6 19a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 005 15.4a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 005 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 008.6 5a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09A1.65 1.65 0 0015.4 5c.46 0 .9.18 1.23.51l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019 8.6c0 .46.18.9.51 1.23l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019 15.4z"/></svg>
                 Settings
               </button>
-              <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-200 hover:bg-[#353a5a]">
+              <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-200 hover:bg-gray-700">
                 <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7"/><rect x="3" y="4" width="4" height="16" rx="2"/></svg>
                 Logout
               </button>
             </div>
             {/* 유저 정보 */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#232946]/80">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900/80">
               <span className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
                 <Image src="/vercel.svg" alt="User Avatar" width={36} height={36} />
               </span>
@@ -431,7 +435,7 @@ export default function Dashboard() {
           </div>
         </aside>
         {/* 메인 대시보드 */}
-        <main className="flex-1 flex gap-8 p-8 rounded-tl-3xl rounded-bl-3xl bg-[#f7f8fa] shadow">
+        <main className="flex-1 flex gap-8 p-8 rounded-tl-3xl rounded-bl-3xl bg-gray-50 shadow">
           {/* 캘린더 카드 (왼쪽, 높이 전체 사용) */}
           <section className="w-[340px] min-w-[300px] max-w-[360px] h-full flex flex-col">
             <div className="flex-1 flex flex-col h-full">
@@ -450,12 +454,12 @@ export default function Dashboard() {
               ].map((card, idx) => (
                 <div
                   key={card.label}
-                  className={`bg-white rounded-xl shadow p-5 flex flex-col gap-2 cursor-pointer transition border-2 ${activeCard === idx ? "border-blue-500 scale-105 bg-blue-50" : "border-transparent"}`}
+                  className={`bg-white rounded-xl shadow p-5 flex flex-col gap-2 cursor-pointer transition border-2 ${activeCard === idx ? "border-gray-400 scale-105 bg-gray-50" : "border-transparent"}`}
                   onClick={() => setActiveCard(idx)}
                 >
                   <span className="text-xs text-gray-500 font-medium">{card.label}</span>
                   <span className="text-2xl font-bold">{card.value}</span>
-                  <span className="text-xs text-green-500">{card.sub}</span>
+                  <span className="text-xs text-gray-500">{card.sub}</span>
                 </div>
               ))}
             </div>
@@ -468,10 +472,53 @@ export default function Dashboard() {
                    activeCard === 2 ? "구인 진행 현황" : "구인 완료 현황"}
                 </span>
                 <div className="flex gap-2 text-xs">
-                  <button className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">Monthly</button>
+                  <button className="px-3 py-1 rounded-full bg-gray-200 text-gray-700 font-semibold">Monthly</button>
                 </div>
               </div>
-              <div className="w-full h-64 relative">
+              <div className="w-full h-64 relative chart-container">
+                <style dangerouslySetInnerHTML={{
+                  __html: `
+                    .chart-container .recharts-bar-rectangle {
+                      transition: none !important;
+                    }
+                    .chart-container .recharts-bar-rectangle:hover {
+                      fill: rgba(107, 114, 128, 0.3) !important;
+                      stroke: none !important;
+                      filter: none !important;
+                    }
+                    .chart-container .recharts-active-bar {
+                      fill: rgba(107, 114, 128, 0.3) !important;
+                      stroke: none !important;
+                      filter: none !important;
+                    }
+                    .chart-container .recharts-tooltip-wrapper {
+                      filter: none !important;
+                    }
+                    .chart-container .recharts-default-tooltip {
+                      background: white !important;
+                      border: 1px solid #e5e7eb !important;
+                      border-radius: 12px !important;
+                      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+                      padding: 12px !important;
+                    }
+                    .chart-container .recharts-tooltip-label {
+                      color: #374151 !important;
+                      font-weight: 600 !important;
+                      margin-bottom: 8px !important;
+                    }
+                    .chart-container .recharts-tooltip-item {
+                      color: #6b7280 !important;
+                      padding: 2px 0 !important;
+                    }
+                    .chart-container .recharts-tooltip-item-name {
+                      color: #374151 !important;
+                    }
+                    .chart-container .recharts-tooltip-item-value {
+                      color: #111827 !important;
+                      font-weight: 600 !important;
+                    }
+                  `
+                }} />
                 {isStackedChart ? (
                   /* Stacked Bar Chart */
                   <ChartContainer config={chartConfig} className="h-full w-full">
@@ -484,13 +531,13 @@ export default function Dashboard() {
                       <Bar 
                         dataKey="inProgress" 
                         stackId="a" 
-                        fill="hsl(var(--chart-1))" 
+                        fill="#374151" 
                         name="진행중"
                       />
                       <Bar 
                         dataKey="applicants" 
                         stackId="a" 
-                        fill="hsl(var(--chart-2))" 
+                        fill="#6b7280" 
                         name="지원자"
                       />
                     </BarChart>
@@ -505,13 +552,13 @@ export default function Dashboard() {
                       <ChartTooltip content={<ChartTooltipContent />} />
                       <Bar 
                         dataKey="adopted" 
-                        fill="hsl(var(--chart-3))" 
+                        fill="#9ca3af" 
                         name="채택완료"
                         label={{ position: 'top' }}
                       />
                       <Bar 
                         dataKey="completed" 
-                        fill="hsl(var(--chart-4))" 
+                        fill="#d1d5db" 
                         name="완료"
                         label={{ position: 'top' }}
                       />
@@ -520,47 +567,169 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
-            {/* 최근 주문 */}
-            <div className="bg-white rounded-xl shadow p-6">
-              <span className="font-semibold text-lg mb-4 block">Recent Orders</span>
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-gray-400 text-xs">
-                    <th className="text-left py-2">Order ID</th>
-                    <th className="text-left py-2">Customer</th>
-                    <th className="text-left py-2">Date</th>
-                    <th className="text-left py-2">City</th>
-                    <th className="text-left py-2">Amount</th>
-                    <th className="text-left py-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t">
-                    <td className="py-2">1</td>
-                    <td>Fozyah Alarmi</td>
-                    <td>02 Mar 2025</td>
-                    <td>Riyadh</td>
-                    <td>5,351</td>
-                    <td className="text-green-500 font-semibold">PAID</td>
-                  </tr>
-                  <tr className="border-t">
-                    <td className="py-2">2</td>
-                    <td>Aya Faisal</td>
-                    <td>12 Apr 2025</td>
-                    <td>Dubai</td>
-                    <td>3,951</td>
-                    <td className="text-green-500 font-semibold">PAID</td>
-                  </tr>
-                  <tr className="border-t">
-                    <td className="py-2">3</td>
-                    <td>Huda Alshihri</td>
-                    <td>04 Jul 2025</td>
-                    <td>Doha</td>
-                    <td>2,351</td>
-                    <td className="text-green-500 font-semibold">PAID</td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* 프로젝트 리스트 */}
+            <div className="bg-white rounded-xl shadow border">
+              <div className="p-6 border-b">
+                <h2 className="text-xl font-semibold text-gray-900">PROJECT LIST</h2>
+              </div>
+              <div className="relative overflow-auto">
+                <table className="w-full caption-bottom text-sm">
+                  <thead className="[&_tr]:border-b">
+                    <tr className="border-b transition-colors hover:bg-gray-50">
+                      <th className="h-12 px-4 text-left align-middle font-medium text-gray-700">NO</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-gray-700">Date</th>
+                      <th className="h-12 px-4 text-left align-middle font-medium text-gray-700">PJT</th>
+                      <th className="h-12 px-4 text-center align-middle font-medium text-gray-700">견적</th>
+                      <th className="h-12 px-4 text-center align-middle font-medium text-gray-700">실측</th>
+                      <th className="h-12 px-4 text-center align-middle font-medium text-gray-700">재단</th>
+                      <th className="h-12 px-4 text-center align-middle font-medium text-gray-700">시공</th>
+                      <th className="h-12 px-4 text-center align-middle font-medium text-gray-700">진행상태</th>
+                    </tr>
+                  </thead>
+                  <tbody className="[&_tr:last-child]:border-0">
+                    <tr className="border-b transition-colors hover:bg-gray-50">
+                      <td className="p-4 align-middle font-medium text-gray-900">8</td>
+                      <td className="p-4 align-middle text-gray-600">'25.06.02</td>
+                      <td className="p-4 align-middle text-gray-900">남양주 아파트</td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 border-2 border-gray-300 bg-white">
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 border-2 border-gray-300 bg-white">
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 border-2 border-gray-300 bg-white">
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex h-6 items-center justify-center rounded-full bg-gray-100 px-2 text-xs font-medium text-gray-600">
+                          진행중
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="border-b transition-colors hover:bg-gray-50">
+                      <td className="p-4 align-middle font-medium text-gray-900">7</td>
+                      <td className="p-4 align-middle text-gray-600">'25.05.31</td>
+                      <td className="p-4 align-middle text-gray-900">서울 창살문 상가</td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 border-2 border-gray-300 bg-white">
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex h-6 items-center justify-center rounded-full bg-gray-100 px-2 text-xs font-medium text-gray-600">
+                          진행중
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="border-b transition-colors hover:bg-gray-50">
+                      <td className="p-4 align-middle font-medium text-gray-900">6</td>
+                      <td className="p-4 align-middle text-gray-600">'25.04.02</td>
+                      <td className="p-4 align-middle text-gray-900">인천 병원</td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex h-6 items-center justify-center rounded-full bg-gray-200 px-2 text-xs font-medium text-gray-700">
+                          완료
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="border-b transition-colors hover:bg-gray-50">
+                      <td className="p-4 align-middle font-medium text-gray-900">5</td>
+                      <td className="p-4 align-middle text-gray-600">'25.01.02</td>
+                      <td className="p-4 align-middle text-gray-900">구리시 빌라</td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex items-center justify-center w-6 h-6 rounded bg-gray-800 text-white">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20,6 9,17 4,12"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td className="p-4 align-middle text-center">
+                        <div className="inline-flex h-6 items-center justify-center rounded-full bg-gray-200 px-2 text-xs font-medium text-gray-700">
+                          완료
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
           {/* 우측 패널 */}
@@ -606,7 +775,7 @@ export default function Dashboard() {
                     <button className="relative flex flex-col items-center group">
                       {/* 종 아이콘 */}
                       <span className="relative">
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-blue-500 transition"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                         {unreadNoti > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadNoti}</span>}
                       </span>
                       <span className="text-xs mt-1 text-gray-500">알림</span>
@@ -635,7 +804,7 @@ export default function Dashboard() {
                     <button className="relative flex flex-col items-center group">
                       {/* 쪽지 아이콘 */}
                       <span className="relative">
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-blue-500 transition"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
                         {unreadMsg > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadMsg}</span>}
                       </span>
                       <span className="text-xs mt-1 text-gray-500">메세지</span>
@@ -664,8 +833,8 @@ export default function Dashboard() {
                     <button className="flex flex-col items-center group">
                       <span className="flex items-center gap-2">
                         {/* 코인/포인트 아이콘 */}
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-yellow-500 group-hover:text-yellow-400 transition"><circle cx="12" cy="12" r="10"/><text x="12" y="16" textAnchor="middle" fontSize="10" fill="#facc15" fontWeight="bold">P</text></svg>
-                        <span className="font-bold text-base text-yellow-600">P {userPoint.toLocaleString()}</span>
+                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><circle cx="12" cy="12" r="10"/><text x="12" y="16" textAnchor="middle" fontSize="10" fill="#6b7280" fontWeight="bold">P</text></svg>
+                        <span className="font-bold text-base text-gray-600">P {userPoint.toLocaleString()}</span>
                       </span>
                       <span className="text-xs text-gray-500 mt-1">포인트</span>
                     </button>
