@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -375,6 +376,7 @@ function CalendarCard() {
 
 
 export default function Dashboard() {
+  const router = useRouter();
   const [activeCard, setActiveCard] = useState(0);
   const [skillChartKey, setSkillChartKey] = useState(0);
   const [wageChartKey, setWageChartKey] = useState(0);
@@ -400,7 +402,14 @@ export default function Dashboard() {
           <nav className="flex-1">
             <ul className="space-y-2">
               {sidebarMenus.map((menu, idx) => (
-                <li key={menu.label} className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium hover:bg-gray-700 cursor-pointer ${idx === 0 ? 'bg-gray-700 font-semibold' : ''}`}> 
+                <li key={menu.label} 
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg font-medium hover:bg-gray-700 cursor-pointer ${idx === 0 ? 'bg-gray-700 font-semibold' : ''}`}
+                    onClick={() => {
+                      if (menu.label === "스케줄") {
+                        router.push("/schedule");
+                      }
+                    }}
+                > 
                   <span>{menu.icon}</span>
                   {menu.label}
                 </li>
