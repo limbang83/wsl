@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { SidebarRight } from "@/components/sidebar-right";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -536,7 +535,9 @@ export default function SchedulePage() {
               </div>
               <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900/80">
                 <span className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                  <Image src="/vercel.svg" alt="User Avatar" width={36} height={36} />
+                  <div className="w-9 h-9 rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold text-sm">
+                    U
+                  </div>
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm truncate">shadcn</div>
@@ -626,8 +627,6 @@ export default function SchedulePage() {
             </section>
           </main>
           
-          {/* shadcn/ui 우측 사이드바 */}
-          <SidebarRight />
         </div>
       </div>
     </SidebarProvider>

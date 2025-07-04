@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -380,14 +379,22 @@ export default function Dashboard() {
   const [activeCard, setActiveCard] = useState(0);
   const [skillChartKey, setSkillChartKey] = useState(0);
   const [wageChartKey, setWageChartKey] = useState(0);
+  const [isSkillChartHovered, setIsSkillChartHovered] = useState(false);
   
   // 차트 타입 결정 (0,2는 Stacked, 1,3은 Label)
   const isStackedChart = activeCard === 0 || activeCard === 2;
   const chartData = isStackedChart ? stackedChartData : labelChartData;
 
-  // 차트 애니메이션 재실행 함수
+  // 차트 애니메이션 재실행 함수 (한 번만)
   const handleSkillChartHover = () => {
-    setSkillChartKey(prev => prev + 1);
+    if (!isSkillChartHovered) {
+      setSkillChartKey(prev => prev + 1);
+      setIsSkillChartHovered(true);
+    }
+  };
+
+  const handleSkillChartLeave = () => {
+    setIsSkillChartHovered(false);
   };
 
   const handleWageChartHover = () => {
@@ -431,7 +438,9 @@ export default function Dashboard() {
             {/* 유저 정보 */}
             <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-900/80">
               <span className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                <Image src="/vercel.svg" alt="User Avatar" width={36} height={36} />
+                <div className="w-9 h-9 rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold text-sm">
+                  U
+                </div>
               </span>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm truncate">shadcn</div>
@@ -750,7 +759,9 @@ export default function Dashboard() {
                 {/* 좌측: 프로필 사진, 닉네임, 이름 */}
                 <div className="flex flex-col items-center gap-2">
                   <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center overflow-hidden">
-                    <Image src="/vercel.svg" alt="Profile" width={80} height={80} />
+                    <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-2xl">
+                      U
+                    </div>
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="font-bold text-lg">너구순진</span>
@@ -876,6 +887,7 @@ export default function Dashboard() {
               transition={{ duration: 0.5, delay: 0.2 }}
               whileHover={{ scale: 1.02 }}
               onMouseEnter={handleSkillChartHover}
+              onMouseLeave={handleSkillChartLeave}
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-lg">수행 숙련도</span>
