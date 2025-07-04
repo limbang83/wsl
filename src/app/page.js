@@ -1,17 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-  AlertDialogOverlay,
-} from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
 import {
   ChartContainer,
@@ -223,12 +212,6 @@ function CalendarCard() {
   const selectedKey = selected.toISOString().slice(0, 10);
   const events = eventsByDate[selectedKey] || [];
 
-  // 커스텀 오버레이(블러 효과)
-  function CustomOverlay(props) {
-    return (
-      <AlertDialogOverlay {...props} className="bg-black/30 backdrop-blur-sm" />
-    );
-  }
 
   // 월을 '7월' 형식으로 반환
   const monthLabel = `${month + 1}월`;
@@ -336,36 +319,37 @@ function CalendarCard() {
             <div className="text-white/70 text-sm">No events</div>
           ) : (
             events.map((ev, idx) => (
-              <AlertDialog key={idx} open={dialogOpen && dialogEvent === idx} onOpenChange={(open) => { setDialogOpen(open); if (!open) setDialogEvent(null); }}>
-                <AlertDialogTrigger asChild>
-                  <button
-                    className="flex items-start gap-3 w-full text-left hover:bg-gray-600/40 rounded-lg px-2 py-1 transition"
-                    onClick={() => { setDialogOpen(true); setDialogEvent(idx); }}
-                  >
-                    <div className="flex flex-col items-center">
-                      <span className="bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold">{ev.title}</div>
-                      <div className="text-xs">{ev.time}</div>
-                    </div>
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent asChild>
-                  <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-auto flex flex-col items-center">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{ev.title}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <div className="text-sm text-gray-500 mb-2">{ev.time}</div>
-                        <div>{ev.description}</div>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogCancel className="mt-4">Close</AlertDialogCancel>
-                  </div>
-                </AlertDialogContent>
-                <CustomOverlay />
-              </AlertDialog>
+              <button
+                key={idx}
+                className="flex items-start gap-3 w-full text-left hover:bg-gray-600/40 rounded-lg px-2 py-1 transition"
+                onClick={() => { setDialogOpen(true); setDialogEvent(idx); }}
+              >
+                <div className="flex flex-col items-center">
+                  <span className="bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">{ev.title}</div>
+                  <div className="text-xs">{ev.time}</div>
+                </div>
+              </button>
             ))
+          )}
+          
+          {/* 캘린더 이벤트 모달 */}
+          {dialogOpen && dialogEvent !== null && events[dialogEvent] && (
+            <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-4">
+                <h2 className="text-lg font-semibold mb-2">{events[dialogEvent].title}</h2>
+                <div className="text-sm text-gray-500 mb-2">{events[dialogEvent].time}</div>
+                <div className="text-sm mb-4">{events[dialogEvent].description}</div>
+                <button 
+                  className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                  onClick={() => { setDialogOpen(false); setDialogEvent(null); }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -380,6 +364,9 @@ export default function Dashboard() {
   const [skillChartKey, setSkillChartKey] = useState(0);
   const [wageChartKey, setWageChartKey] = useState(0);
   const [isSkillChartHovered, setIsSkillChartHovered] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [showPointModal, setShowPointModal] = useState(false);
   
   // 차트 타입 결정 (0,2는 Stacked, 1,3은 Label)
   const isStackedChart = activeCard === 0 || activeCard === 2;
@@ -790,92 +777,106 @@ export default function Dashboard() {
               </div>
               <div className="flex gap-8 justify-center">
                 {/* 알림 */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button className="relative flex flex-col items-center group">
-                      {/* 종 아이콘 */}
-                      <span className="relative">
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                        {unreadNoti > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadNoti}</span>}
-                      </span>
-                      <span className="text-xs mt-1 text-gray-500">알림</span>
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent asChild>
-                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-auto flex flex-col items-center">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>알림</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <ul className="mt-2 space-y-2 text-left">
-                            {notifications.length === 0 ? <li className="text-gray-400">알림이 없습니다.</li> : notifications.map(n => (
-                              <li key={n.id} className={n.read ? "text-gray-400" : "font-semibold text-black"}>{n.text}</li>
-                            ))}
-                          </ul>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogCancel className="mt-4">닫기</AlertDialogCancel>
+                <div className="relative">
+                  <button 
+                    className="relative flex flex-col items-center group"
+                    onClick={() => setShowNotificationModal(true)}
+                  >
+                    {/* 종 아이콘 */}
+                    <span className="relative">
+                      <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                      {unreadNoti > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadNoti}</span>}
+                    </span>
+                    <span className="text-xs mt-1 text-gray-500">알림</span>
+                  </button>
+                  
+                  {showNotificationModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+                      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-4">
+                        <h2 className="text-lg font-semibold mb-2">알림</h2>
+                        <p className="text-sm text-gray-600 mb-4">알림 목록을 확인하세요.</p>
+                        <ul className="space-y-2 text-left mb-4">
+                          {notifications.length === 0 ? <li className="text-gray-400">알림이 없습니다.</li> : notifications.map(n => (
+                            <li key={n.id} className={n.read ? "text-gray-400" : "font-semibold text-black"}>{n.text}</li>
+                          ))}
+                        </ul>
+                        <button 
+                          className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                          onClick={() => setShowNotificationModal(false)}
+                        >
+                          닫기
+                        </button>
+                      </div>
                     </div>
-                  </AlertDialogContent>
-                  <AlertDialogOverlay className="bg-black/30 backdrop-blur-sm" />
-                </AlertDialog>
+                  )}
+                </div>
                 {/* 쪽지 */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button className="relative flex flex-col items-center group">
-                      {/* 쪽지 아이콘 */}
-                      <span className="relative">
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-                        {unreadMsg > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadMsg}</span>}
-                      </span>
-                      <span className="text-xs mt-1 text-gray-500">메세지</span>
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent asChild>
-                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-auto flex flex-col items-center">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>메세지</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <ul className="mt-2 space-y-2 text-left">
-                            {messages.length === 0 ? <li className="text-gray-400">메세지가 없습니다.</li> : messages.map(m => (
-                              <li key={m.id} className={m.read ? "text-gray-400" : "font-semibold text-black"}>{m.text}</li>
-                            ))}
-                          </ul>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogCancel className="mt-4">닫기</AlertDialogCancel>
+                <div className="relative">
+                  <button 
+                    className="relative flex flex-col items-center group"
+                    onClick={() => setShowMessageModal(true)}
+                  >
+                    {/* 쪽지 아이콘 */}
+                    <span className="relative">
+                      <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                      {unreadMsg > 0 && <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold border-2 border-white z-10">{unreadMsg}</span>}
+                    </span>
+                    <span className="text-xs mt-1 text-gray-500">메세지</span>
+                  </button>
+                  
+                  {showMessageModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+                      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-4">
+                        <h2 className="text-lg font-semibold mb-2">메세지</h2>
+                        <p className="text-sm text-gray-600 mb-4">받은 메세지를 확인하세요.</p>
+                        <ul className="space-y-2 text-left mb-4">
+                          {messages.length === 0 ? <li className="text-gray-400">메세지가 없습니다.</li> : messages.map(m => (
+                            <li key={m.id} className={m.read ? "text-gray-400" : "font-semibold text-black"}>{m.text}</li>
+                          ))}
+                        </ul>
+                        <button 
+                          className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                          onClick={() => setShowMessageModal(false)}
+                        >
+                          닫기
+                        </button>
+                      </div>
                     </div>
-                  </AlertDialogContent>
-                  <AlertDialogOverlay className="bg-black/30 backdrop-blur-sm" />
-                </AlertDialog>
+                  )}
+                </div>
                 {/* 포인트 */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button className="flex flex-col items-center group">
-                      <span className="flex items-center gap-2">
-                        {/* 코인/포인트 아이콘 */}
-                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><circle cx="12" cy="12" r="10"/><text x="12" y="16" textAnchor="middle" fontSize="10" fill="#6b7280" fontWeight="bold">P</text></svg>
-                        <span className="font-bold text-base text-gray-600">P {userPoint.toLocaleString()}</span>
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">포인트</span>
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent asChild>
-                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-auto flex flex-col items-center">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>포인트 내역</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <ul className="mt-2 space-y-2 text-left">
-                            {pointHistory.length === 0 ? <li className="text-gray-400">포인트 내역이 없습니다.</li> : pointHistory.map(p => (
-                              <li key={p.id} className="text-black"><span className="font-semibold mr-2">{p.text}</span><span className="text-xs text-gray-400">{p.date}</span></li>
-                            ))}
-                          </ul>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogCancel className="mt-4">닫기</AlertDialogCancel>
+                <div className="relative">
+                  <button 
+                    className="flex flex-col items-center group"
+                    onClick={() => setShowPointModal(true)}
+                  >
+                    <span className="flex items-center gap-2">
+                      {/* 코인/포인트 아이콘 */}
+                      <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-gray-500 group-hover:text-gray-700 transition"><circle cx="12" cy="12" r="10"/><text x="12" y="16" textAnchor="middle" fontSize="10" fill="#6b7280" fontWeight="bold">P</text></svg>
+                      <span className="font-bold text-base text-gray-600">P {userPoint.toLocaleString()}</span>
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1">포인트</span>
+                  </button>
+                  
+                  {showPointModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+                      <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-4">
+                        <h2 className="text-lg font-semibold mb-2">포인트 내역</h2>
+                        <ul className="space-y-2 text-left mb-4">
+                          {pointHistory.length === 0 ? <li className="text-gray-400">포인트 내역이 없습니다.</li> : pointHistory.map(p => (
+                            <li key={p.id} className="text-black"><span className="font-semibold mr-2">{p.text}</span><span className="text-xs text-gray-400">{p.date}</span></li>
+                          ))}
+                        </ul>
+                        <button 
+                          className="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                          onClick={() => setShowPointModal(false)}
+                        >
+                          닫기
+                        </button>
+                      </div>
                     </div>
-                  </AlertDialogContent>
-                  <AlertDialogOverlay className="bg-black/30 backdrop-blur-sm" />
-                </AlertDialog>
+                  )}
+                </div>
               </div>
             </div>
             

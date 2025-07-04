@@ -4,16 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogOverlay,
-} from "@/components/ui/alert-dialog";
-import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
@@ -267,19 +257,13 @@ function CalendarCard() {
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [selected, setSelected] = useState(today);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogEvent, setDialogEvent] = useState(null);
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
   const matrix = getMonthMatrix(year, month);
   const selectedKey = selected.toISOString().slice(0, 10);
   const events = eventsByDate[selectedKey] || [];
 
-  // 커스텀 오버레이(블러 효과)
-  function CustomOverlay(props) {
-    return (
-      <AlertDialogOverlay {...props} className="bg-black/30 backdrop-blur-sm" />
-    );
-  }
 
   // 월을 '7월' 형식으로 반환
   const monthLabel = `${month + 1}월`;
@@ -387,39 +371,40 @@ function CalendarCard() {
             <div className="text-white/70 text-sm">No events</div>
           ) : (
             events.map((ev, idx) => (
-              <AlertDialog key={idx} open={dialogOpen && dialogEvent === idx} onOpenChange={(open) => { setDialogOpen(open); if (!open) setDialogEvent(null); }}>
-                <AlertDialogTrigger asChild>
-                  <button
-                    className="flex items-start gap-3 w-full text-left hover:bg-gray-600/40 rounded-lg px-2 py-1 transition"
-                    onClick={() => { setDialogOpen(true); setDialogEvent(idx); }}
-                  >
-                    <div className="flex flex-col items-center">
-                      <span className="bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold">{ev.title}</div>
-                      <div className="text-xs">{ev.time}</div>
-                    </div>
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent asChild>
-                  <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-auto flex flex-col items-center">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{ev.title}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <div className="text-sm text-gray-500 mb-2">{ev.time}</div>
-                        <div>{ev.description}</div>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogCancel className="mt-4">Close</AlertDialogCancel>
-                  </div>
-                </AlertDialogContent>
-                <CustomOverlay />
-              </AlertDialog>
+              <button
+                key={idx}
+                className="flex items-start gap-3 w-full text-left hover:bg-gray-600/40 rounded-lg px-2 py-1 transition"
+                onClick={() => { setShowEventModal(true); setSelectedEvent(ev); }}
+              >
+                <div className="flex flex-col items-center">
+                  <span className="bg-white text-gray-700 font-bold rounded-full w-8 h-8 flex items-center justify-center">{selected.getDate()}</span>
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">{ev.title}</div>
+                  <div className="text-xs">{ev.time}</div>
+                </div>
+              </button>
             ))
           )}
         </div>
       </div>
+
+      {/* Event Modal */}
+      {showEventModal && selectedEvent && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-xs w-full mx-4">
+            <h2 className="text-lg font-semibold mb-2">{selectedEvent.title}</h2>
+            <div className="text-sm text-gray-500 mb-2">{selectedEvent.time}</div>
+            <div className="text-sm text-gray-700 mb-4">{selectedEvent.description}</div>
+            <button
+              onClick={() => setShowEventModal(false)}
+              className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
